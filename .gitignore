@@ -1,0 +1,4 @@
+.vscode/
+*.log
+error_log
+.DS_Store
