@@ -4,28 +4,36 @@ namespace App\Core;
 use PDO;
 use PDOException;
 
-class Database {
-    private $host = 'localhost';
-    private $db_name = 'tecnosia_db';
-    private $username = 'serhoyos'; 
-    private $password = 'Akibaldo49*'; 
-    protected $conn;
+class Database
+{
+    private static $instance = null;
 
-    public function __construct() {
-        try {
-            $this->conn = new PDO(
-                "mysql:host=" . $this->host . ";dbname=" . $this->db_name, 
-                $this->username, 
-                $this->password
-            );
-            $this->conn->exec("set names utf8");
-            $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch(PDOException $e) {
-            die("Error de conexión: " . $e->getMessage());
+    public static function getConnection()
+    {
+        if (self::$instance === null) {
+            try {
+                // CONFIGURACIÓN DE CONEXIÓN
+                $host = 'localhost';
+                $db   = 'tecnosia_db'; // Asegúrate que este sea el nombre en phpMyAdmin
+                $user = 'admin_tecnosia';        // Usuario por defecto
+                $pass = 'TecnoSIA2026*';            // Prueba vacío primero. Si falla, prueba con 'root'
+                $charset = 'utf8mb4';
+
+                $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
+                
+                $options = [
+                    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                    PDO::ATTR_EMULATE_PREPARES   => false,
+                ];
+
+                self::$instance = new PDO($dsn, $user, $pass, $options);
+                
+            } catch (PDOException $e) {
+                // Si vuelve a fallar, este mensaje nos dirá por qué
+                die("Error de conexión a la base de datos: " . $e->getMessage());
+            }
         }
-    }
-
-    public function getConnection() {
-        return $this->conn;
+        return self::$instance;
     }
 }

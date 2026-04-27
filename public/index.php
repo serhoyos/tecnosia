@@ -1,68 +1,47 @@
 <?php
 /**
- * TECNOSIA - Front Controller Centralizado
- * Proyecto de Grado - UNAD 2026
- * ---------------------------------------------------------
- * Este archivo gestiona: Sesiones, Autoload y Enrutamiento.
+ * ARCHIVO DE ENTRADA PRINCIPAL - TECNOSIA
+ * Ubicación: public/index.php
  */
 
-// 1. GESTIÓN DE SESIONES
-// Debe ir al inicio para que el Dashboard reconozca al usuario.
-session_start();
-
-// 2. CONFIGURACIÓN DE ERRORES
-// Mantener activo durante el desarrollo para depurar en Linux.
 ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// 3. AUTOLOAD DE CLASES (Estándar PSR-4)
-// Busca automáticamente archivos en la carpeta app/
-spl_autoload_register(function ($class) {
-    $classPath = str_replace('\\', '/', $class);
-    
-    // Mapeo: El Namespace "App\" apunta a la carpeta física "app/"
-    $file = dirname(__DIR__) . '/' . str_replace('App/', 'app/', $classPath) . '.php';
+require_once __DIR__ . '/../config/config.php';
 
+// Autocargador manual
+spl_autoload_register(function ($class) {
+    $baseDir = __DIR__ . '/../app/';
+    $relativeClass = str_replace('App\\', '', $class);
+    $file = $baseDir . str_replace('\\', '/', $relativeClass) . '.php';
     if (file_exists($file)) {
         require_once $file;
-    } else {
-        echo "<div style='background:#fff5f5; color:#c53030; padding:20px; border:1px solid #feb2b2; font-family:sans-serif;'>";
-        echo "<h3>🚨 Error de Carga de Clase</h3>";
-        echo "No se encontró el archivo para la clase: <b>$class</b><br>";
-        echo "Ruta esperada: <code>$file</code>";
-        echo "</div>";
-        die();
     }
 });
 
-// 4. IMPORTAR COMPONENTES
+use App\Controllers\AuthController;
+use App\Controllers\IdeaController;
 use App\Core\Router;
 
+// --- AQUÍ ESTABA EL ERROR: Inicializamos la variable ---
 $router = new Router();
 
-// 5. DEFINICIÓN DE RUTAS (Mapeo URL -> Controlador)
-// ------------------------------------------------------------------
+// --- REGISTRO DE RUTAS ---
+$router->add('GET', '', [AuthController::class, 'index']);
+$router->add('GET', 'login', [AuthController::class, 'index']);
+$router->add('POST', 'login', [AuthController::class, 'login']);
+$router->add('GET', 'logout', [AuthController::class, 'logout']);
 
-/**
- * RUTA RAÍZ (Home / Dashboard)
- * Ahora delegamos la lógica al DashboardController para decidir
- * si mostramos el panel o invitamos a iniciar sesión.
- */
-$router->get('/', 'DashboardController@index');
+// Rutas de Registro
+$router->add('GET', 'registro', [AuthController::class, 'showRegister']);
+$router->add('POST', 'registro', [AuthController::class, 'register']);
 
-/**
- * RUTAS DE AUTENTICACIÓN (AuthController)
- */
-// Registro de nuevos emprendedores
-$router->get('registro', 'AuthController@mostrarRegistro');
-$router->post('registro', 'AuthController@procesarRegistro');
+// Rutas de Dashboard/Ideas
+$router->add('GET', 'dashboard', [IdeaController::class, 'dashboard']);
+$router->add('GET', 'ideas/crear', [IdeaController::class, 'create']);
+$router->add('POST', 'ideas/guardar', [IdeaController::class, 'store']);
+$router->add('GET', 'ideas/eliminar', [IdeaController::class, 'delete']);
 
-// Inicio y cierre de sesión
-$router->get('login', 'AuthController@mostrarLogin');
-$router->post('login', 'AuthController@procesarLogin');
-$router->get('logout', 'AuthController@logout');
-
-
-// 6. EJECUCIÓN
-// ------------------------------------------------------------------
+// Resolver
 $router->resolve();

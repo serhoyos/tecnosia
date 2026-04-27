@@ -1,10 +1,13 @@
-RewriteEngine On
-RewriteBase /tecnosia/
+<IfModule mod_rewrite.c>
+    RewriteEngine On
 
-# Redirigir la raíz a la carpeta public
-RewriteRule ^$ public/index.php [L]
+    # Redirigir todo lo que llegue a la raíz hacia la carpeta public
+    RewriteRule ^$ public/index.php [L]
 
-# Si no es un archivo o directorio real, enviar a index.php
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ public/index.php?url=$1 [QSA,L]
+    # Si el archivo o carpeta solicitado no existe físicamente...
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # ...entonces mándalo al index.php dentro de public
+    RewriteRule ^(.*)$ public/index.php?url=$1 [L]
+</IfModule>

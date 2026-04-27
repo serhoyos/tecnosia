@@ -1,4 +1,17 @@
+# IDEs y Editores
 .vscode/
+.idea/
+*.swp
+
+# Sistema Operativo
+.DS_Store
+Thumbs.db
+
+# Logs y Temporales
 *.log
 error_log
-.DS_Store
+storage/logs/*.log
+
+# Configuración Sensible (Si usas .env más adelante)
+.env
+config/config.php
