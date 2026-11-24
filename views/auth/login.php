@@ -20,7 +20,7 @@
                 <div class="alert alert-danger py-2 small">Credenciales incorrectas. Inténtalo de nuevo.</div>
             <?php endif; ?>
 
-            <form action="<?= \URL_BASE; ?>login" method="POST">
+            <form action="<?php echo URL_BASE; ?>login" method="POST">
                 <div class="mb-3">
                     <label class="form-label fw-semibold">Correo Electrónico</label>
                     <input type="email" name="email" class="form-control form-control-lg" placeholder="nombre@correo.com" required>
@@ -36,7 +36,7 @@
 
             <div class="mt-4 text-center">
                 <p class="text-muted small">¿No tienes cuenta? 
-                    <a href="<?= \URL_BASE; ?>registro" class="text-primary fw-bold text-decoration-none">Regístrate aquí</a>
+                    <a href="<?php echo URL_BASE; ?>registro" class="fw-bold text-decoration-none">Regístrate aquí</a>
                 </p>
             </div>
         </div>

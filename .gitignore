@@ -1,17 +1,27 @@
-# IDEs y Editores
+
+# IDEs y editores
 .vscode/
 .idea/
 *.swp
 
-# Sistema Operativo
+# Archivos del sistema
 .DS_Store
 Thumbs.db
 
-# Logs y Temporales
+# Registros de errores
 *.log
 error_log
 storage/logs/*.log
 
-# Configuración Sensible (Si usas .env más adelante)
+# Configuración sensible
 .env
 config/config.php
+
+# Respaldos de base de datos
+*.sql
+
+# Archivos comprimidos y respaldos
+*.zip
+*.rar
+*.7z
+*.bak

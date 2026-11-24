@@ -23,7 +23,7 @@
                             <input type="text" name="nombre" class="form-control" required placeholder="Tu nombre">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Correo Electrón emotion</label>
+                            <label class="form-label">Correo Electrónico</label>
                             <input type="email" name="email" class="form-control" required placeholder="nombre@correo.com">
                         </div>
                         <div class="mb-4">

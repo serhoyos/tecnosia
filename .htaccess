@@ -1,13 +1,15 @@
 <IfModule mod_rewrite.c>
     RewriteEngine On
-
-    # Redirigir todo lo que llegue a la raíz hacia la carpeta public
-    RewriteRule ^$ public/index.php [L]
-
-    # Si el archivo o carpeta solicitado no existe físicamente...
+    
+    # Establece la base de la reescritura en la raíz del dominio
+    RewriteBase /
+    
+    # Si la petición no es un archivo físico que exista
     RewriteCond %{REQUEST_FILENAME} !-f
+    # Si la petición no es una carpeta física que exista
     RewriteCond %{REQUEST_FILENAME} !-d
-
-    # ...entonces mándalo al index.php dentro de public
-    RewriteRule ^(.*)$ public/index.php?url=$1 [L]
+    
+    # Envía todo el tráfico al index.php de forma limpia
+    RewriteRule ^(.*)$ index.php [QSA,L]
 </IfModule>
+

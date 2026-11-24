@@ -1,96 +1,160 @@
-<!-- views/dashboard/ideas.php -->
-<div class="container mt-4">
-    <!-- Encabezado -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-dark"><i class="fas fa-rocket text-primary"></i> Mi Tablero de Innovación</h2>
-        <a href="<?= \URL_BASE; ?>ideas/crear" class="btn btn-success shadow-sm px-4">
-            <i class="fas fa-plus"></i> Registrar Nueva Hipótesis
-        </a>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - TECNOSIA</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa; /* Fondo gris muy claro */
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        .dashboard-container {
+            max-width: 800px; /* Ancho máximo para mantener la legibilidad de la tarjeta */
+            margin: 0 auto;
+        }
+        .idea-card {
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .diagnostic-card {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+        .progress {
+            height: 12px;
+            background-color: #e9ecef;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container py-5 dashboard-container">
+    
+    <!-- Encabezado Superior -->
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <!-- Reemplaza la variable de sesión si la llamas diferente -->
+        <h2 class="m-0 fw-bold" style="color: #2c3e50;">Hola, <?= htmlspecialchars($_SESSION['nombre'] ?? 'Sergio Hoyos'); ?> 👋</h2>
+        <a href="<?= \URL_BASE; ?>logout" class="btn btn-danger px-4 rounded-3">Cerrar sesión</a>
     </div>
 
-    <!-- Alertas -->
-    <?php if (isset($_GET['success'])): ?>
-        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
-            <strong>¡Excelente!</strong> Tu idea ha sido registrada y procesada por Tecnosia AI.
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    <?php endif; ?>
+    <!-- Título de Sección y Botón -->
+    <div class="mb-4">
+        <h3 class="fw-bold mb-3" style="color: #2c3e50;">💡 Mis Ideas</h3>
+        <a href="<?= \URL_BASE; ?>ideas/create" class="btn btn-success px-4 rounded-3 fw-semibold">+ Nueva Idea</a>
+    </div>
 
-    <div class="row">
-        <?php if (empty($ideas)): ?>
-            <div class="col-12 text-center py-5">
-                <p class="text-muted italic">Aún no has registrado ninguna hipótesis de negocio.</p>
-            </div>
-        <?php else: ?>
-            <?php foreach ($ideas as $idea): ?>
-                <div class="col-12 mb-4">
-                    <div class="card shadow-sm border-0" style="border-radius: 12px; overflow: hidden;">
+    <!-- Validar si hay ideas registradas -->
+    <?php if (!empty($ideas)): ?>
+        
+        <!-- Ciclo para imprimir cada idea -->
+        <?php foreach ($ideas as $idea): ?>
+            <div class="card idea-card mb-4 p-2">
+                <div class="card-body">
+                    
+                    <!-- Información de la Idea -->
+                    <h4 class="card-title fw-bold mb-3"><?= htmlspecialchars($idea['titulo']); ?></h4>
+                    <p class="card-text text-secondary mb-3" style="line-height: 1.6;">
+                        <?= nl2br(htmlspecialchars($idea['descripcion'])); ?>
+                    </p>
+                    <p class="mb-3 text-dark"><strong>Sector:</strong> <?= htmlspecialchars($idea['sector']); ?></p>
+
+                    <!-- Botones de Acción -->
+                    <div class="d-flex gap-2 mb-4">
+                        <a href="<?= \URL_BASE; ?>ideas/edit?id=<?= $idea['id']; ?>" class="btn btn-primary btn-sm px-3 rounded-3">Editar</a>
                         
-                        <!-- Cabecera de Tarjeta -->
-                        <div class="card-header bg-white border-0 pt-3 d-flex justify-content-between align-items-center">
-                            <h4 class="mb-0 fw-bold text-primary"><?= htmlspecialchars($idea['titulo']); ?></h4>
-                            <span class="badge rounded-pill bg-light text-dark border px-3"><?= htmlspecialchars($idea['sector']); ?></span>
-                        </div>
-                        
-                        <div class="card-body pt-2">
-                            <!-- Descripción Principal -->
-                            <p class="text-secondary"><?= nl2br(htmlspecialchars($idea['descripcion'])); ?></p>
-                            
-                            <hr class="opacity-25">
-
-                            <!-- SECCIÓN DE DIAGNÓSTICO IA -->
-                            <div class="ai-diagnostic-container">
-                                <h6 class="text-info mb-3 d-flex align-items-center gap-2">
-                                    <i class="fas fa-brain"></i> Diagnóstico Experimental de IA
-                                </h6>
-                                
-                                <?php if (!empty($idea['ai_data'])): ?>
-                                    <!-- Caja de Análisis -->
-                                    <div class="p-3 mb-3 bg-light rounded border-start border-info border-4 shadow-sm">
-                                        <p class="small mb-0">
-                                            <strong>Análisis:</strong> <?= htmlspecialchars($idea['ai_data']['coherence_analysis']); ?>
-                                        </p>
-                                    </div>
-
-                                    <!-- Fila de Riesgos y Sugerencias -->
-                                    <div class="row g-3">
-                                        <div class="col-md-6">
-                                            <div class="h-100 p-2">
-                                                <label class="text-danger small fw-bold d-block mb-1">RIESGOS:</label>
-                                                <p class="small text-muted mb-0"><?= htmlspecialchars($idea['ai_data']['risks_identified']); ?></p>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="h-100 p-2">
-                                                <label class="text-success small fw-bold d-block mb-1">SUGERENCIAS:</label>
-                                                <p class="small text-muted mb-0"><?= htmlspecialchars($idea['ai_data']['focus_suggestions']); ?></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <?php else: ?>
-                                    <div class="alert alert-warning py-2 mt-2 small border-0">
-                                        <i class="fas fa-hourglass-half fa-spin"></i> No hay diagnóstico disponible para esta hipótesis.
-                                    </div>
-                                <?php endif; ?>
-                            </div>
-                        </div>
-
-                        <!-- Pie de Tarjeta -->
-                        <div class="card-footer bg-white border-0 pb-3 d-flex justify-content-between align-items-center">
-                            <small class="text-muted font-monospace">ID: #<?= $idea['id']; ?> | <?= date('d/m/Y', strtotime($idea['created_at'])); ?></small>
-                            <a href="<?= \URL_BASE; ?>ideas/eliminar?id=<?= $idea['id']; ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Eliminar esta idea?');">
-                                <i class="fas fa-trash-alt"></i> Eliminar
-                            </a>
-                        </div>
+                        <form action="<?= \URL_BASE; ?>ideas/delete" method="POST" onsubmit="return confirm('¿Estás seguro de que deseas eliminar esta idea?');">
+                            <input type="hidden" name="id" value="<?= $idea['id']; ?>">
+                            <button type="submit" class="btn btn-danger btn-sm px-3 rounded-3">Eliminar</button>
+                        </form>
                     </div>
+
+                    <!-- Diagnóstico (Solo se muestra si existe el JSON) -->
+                    <?php 
+                    $diag = isset($idea['result_json']) ? json_decode($idea['result_json'], true) : null;
+                    if ($diag): 
+                        // Variables del diagnóstico
+                        $score = $diag['score'] ?? 0;
+                        $semaforo = $diag['semaforo'] ?? 'GRIS';
+                        $veredicto = $diag['veredicto'] ?? '';
+                        $porcentaje = ($score / 10) * 100;
+
+                        // Lógica de colores según el semáforo
+                        $colorSemaforo = 'text-secondary';
+                        $bgBarra = 'bg-secondary';
+
+                        if ($semaforo === 'VERDE') {
+                            $colorSemaforo = 'text-success';
+                            $bgBarra = 'bg-success';
+                        } elseif ($semaforo === 'AMARILLO') {
+                            $colorSemaforo = 'text-warning'; // El amarillo de Bootstrap
+                            $bgBarra = 'bg-warning';
+                            // Si el warning no te parece lo bastante fuerte, puedes usar un estilo inline en la etiqueta
+                        } elseif ($semaforo === 'ROJO') {
+                            $colorSemaforo = 'text-danger';
+                            $bgBarra = 'bg-danger';
+                        }
+                    ?>
+                        <div class="diagnostic-card p-4 mt-3">
+                            <h5 class="fw-bold mb-3">🧠 Diagnóstico</h5>
+                            
+                            <!-- Score y Barra de Progreso -->
+                            <p class="fw-bold mb-1">Score:</p>
+                            <div class="progress mb-1">
+                                <div class="progress-bar <?= $bgBarra; ?>" role="progressbar" style="width: <?= $porcentaje; ?>%;" aria-valuenow="<?= $score; ?>" aria-valuemin="0" aria-valuemax="10"></div>
+                            </div>
+                            <small class="text-secondary d-block mb-3"><?= $score; ?>/10</small>
+
+                            <!-- Semáforo y Veredicto -->
+                            <p class="fw-bold mb-2 <?= $colorSemaforo; ?>" style="font-size: 1.1rem;"><?= htmlspecialchars($semaforo); ?></p>
+                            <p class="mb-3 text-dark"><strong>Veredicto:</strong> <?= htmlspecialchars($veredicto); ?></p>
+
+                            <!-- Insights -->
+                            <?php if (!empty($diag['insights'])): ?>
+                                <p class="fw-bold mb-1">Insights</p>
+                                <ul class="text-dark mb-3">
+                                    <?php foreach ($diag['insights'] as $insight): ?>
+                                        <li><?= htmlspecialchars($insight); ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            <?php endif; ?>
+
+                            <!-- Riesgos -->
+                            <?php if (!empty($diag['riesgos'])): ?>
+                                <p class="fw-bold mb-1">Riesgos</p>
+                                <ul class="text-dark mb-3">
+                                    <?php foreach ($diag['riesgos'] as $riesgo): ?>
+                                        <li><?= htmlspecialchars($riesgo); ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            <?php endif; ?>
+
+                            <!-- Recomendaciones -->
+                            <?php if (!empty($diag['recomendaciones'])): ?>
+                                <p class="fw-bold mb-1">Recomendaciones</p>
+                                <ul class="text-dark mb-0">
+                                    <?php foreach ($diag['recomendaciones'] as $rec): ?>
+                                        <li><?= htmlspecialchars($rec); ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            <?php endif; ?>
+
+                        </div>
+                    <?php endif; ?> <!-- Fin Diagnóstico -->
+
                 </div>
-            <?php endforeach; ?>
-        <?php endif; ?>
-    </div>
+            </div>
+        <?php endforeach; ?>
+
+    <?php endif; ?> <!-- Fin Validar Ideas -->
+
 </div>
 
-<style>
-    .card { transition: transform 0.2s; }
-    .card:hover { transform: translateY(-3px); }
-    .border-info { border-color: #0dcaf0 !important; }
-</style>
+</body>
+</html>
