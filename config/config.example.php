@@ -1,4 +1,3 @@
-
 <?php
 
 // Configuración de ejemplo para instalar TECNOSIA.
@@ -10,3 +9,6 @@ define('DB_NAME', 'tecnosia');
 define('DB_USER', 'usuario_base_de_datos');
 define('DB_PASS', 'contraseña_base_de_datos');
 define('DB_CHARSET', 'utf8mb4');
+
+// URL base de la aplicación.
+define('URL_BASE', 'http://tecnosia.local/');

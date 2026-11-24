@@ -20,6 +20,9 @@ config/config.php
 # Respaldos de base de datos
 *.sql
 
+# Permitir únicamente el esquema de instalación
+!/schema.sql
+
 # Archivos comprimidos y respaldos
 *.zip
 *.rar
